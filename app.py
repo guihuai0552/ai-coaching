@@ -601,10 +601,8 @@ def generate_report():
         if not bazi_info:
             return jsonify({"error": "计算八字信息失败"}), 400
         
-        # 生成AI报告
-        bazi_str = bazi_info.get('bazi', '')
-        prompt = f"八字：{bazi_str}，请生成命理分析报告。"
-        reports = call_deepseek_api(prompt)
+        # 生成AI报告 - 根据前端期望的格式构造报告对象
+        reports = generate_ai_report(bazi_info)
         
         # 组合结果
         result = {
@@ -617,23 +615,28 @@ def generate_report():
         logger.error(f"生成报告请求处理出错: {e}")
         return jsonify({"error": f"处理请求时出错: {str(e)}"}), 500
 
-# 添加两个直接返回静态文件内容的路由，解决Render.com部署问题
+# 添加直接返回静态文件内容的路由，解决Render.com部署问题
+# 同时支持新旧两种路径
 @app.route('/style.css')
+@app.route('/static/style.css')
 def serve_css():
     try:
         with open('static/style.css', 'r', encoding='utf-8') as f:
             css_content = f.read()
-        return css_content, 200, {'Content-Type': 'text/css'}
+        logger.info(f"成功读取CSS文件，内容长度: {len(css_content)}")
+        return css_content, 200, {'Content-Type': 'text/css', 'Cache-Control': 'no-cache'}
     except Exception as e:
         logger.error(f"读取CSS文件失败: {e}")
         return "", 500
 
 @app.route('/script.js')
+@app.route('/static/script.js')
 def serve_js():
     try:
         with open('static/script.js', 'r', encoding='utf-8') as f:
             js_content = f.read()
-        return js_content, 200, {'Content-Type': 'application/javascript'}
+        logger.info(f"成功读取JS文件，内容长度: {len(js_content)}")
+        return js_content, 200, {'Content-Type': 'application/javascript', 'Cache-Control': 'no-cache'}
     except Exception as e:
         logger.error(f"读取JS文件失败: {e}")
         return "", 500
