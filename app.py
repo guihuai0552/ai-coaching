@@ -5,6 +5,7 @@
 import os
 import json
 import logging
+import traceback
 from flask import Flask, render_template, request, jsonify
 import requests
 from datetime import datetime
@@ -592,6 +593,9 @@ def generate_report():
         day = int(data.get('day'))
         shichen = data.get('shichen')
         
+        # 记录请求详情
+        logger.info(f"收到生成报告请求: 年={year}, 月={month}, 日={day}, 时辰={shichen}")
+        
         # 根据时辰获取小时
         hour = SHICHEN_MAP.get(shichen, (0, 0))[0]
         
@@ -599,10 +603,24 @@ def generate_report():
         bazi_info = calculate_bazi(year, month, day, hour)
         
         if not bazi_info:
+            logger.error("计算八字信息失败")
             return jsonify({"error": "计算八字信息失败"}), 400
         
-        # 生成AI报告 - 根据前端期望的格式构造报告对象
-        reports = generate_ai_report(bazi_info)
+        logger.info(f"八字计算成功: {bazi_info['bazi']}")
+        
+        # 尝试使用generate_ai_report函数
+        try:
+            logger.info("尝试使用generate_ai_report函数生成报告...")
+            reports = generate_ai_report(bazi_info)
+            logger.info("使用generate_ai_report生成报告成功")
+        except Exception as api_err:
+            # 如果API调用出错，生成默认内容
+            logger.error(f"API调用出错: {api_err}，使用预设模板")
+            reports = {
+                "overview": f"八字信息：{bazi_info['bazi']}\n\n在传统五行学说中，您的八字中包含了重要的信息。目前由于网络原因，我们无法生成详细分析。请稍后再试。",
+                "ten_gods": "十神分析暂时无法生成，请稍后再试。",
+                "action_guide": "行动指南暂时无法生成，请稍后再试。"
+            }
         
         # 组合结果
         result = {
@@ -610,10 +628,13 @@ def generate_report():
             "reports": reports
         }
         
+        logger.info("返回报告结果")
         return jsonify(result)
     except Exception as e:
         logger.error(f"生成报告请求处理出错: {e}")
-        return jsonify({"error": f"处理请求时出错: {str(e)}"}), 500
+        # 返回更详细的错误信息
+        error_details = {"error": f"处理请求时出错: {str(e)}", "traceback": traceback.format_exc()}
+        return jsonify(error_details), 500
 
 # 添加直接返回静态文件内容的路由，解决Render.com部署问题
 # 同时支持新旧两种路径
