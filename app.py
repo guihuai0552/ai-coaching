@@ -21,7 +21,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static', static_folder='static')
 
 # Flowith API配置
 FLOWITH_ENDPOINT = "https://edge.flowith.net/external/use/seek-knowledge"
@@ -325,26 +325,14 @@ def generate_ai_report(bazi_info):
         
         all_reports = {}
         
-        # 依次生成三个部分的报告
+        # 由于Flowith API配额已过期，直接使用DeepSeek API
         for section, prompt in prompts.items():
             try:
-                # 首先尝试使用Flowith API
-                logger.info(f"尝试使用Flowith API生成{section}报告")
-                report = call_flowith_api(prompt)
-                
-                # 检查是否包含错误信息（表示Flowith API调用失败）
-                if "抱歉" in report and ("出现问题" in report or "出错" in report or "失败" in report):
-                    logger.warning(f"Flowith API生成{section}报告失败，尝试使用DeepSeek API")
-                    # 如果Flowith失败，尝试使用DeepSeek API
-                    report = call_deepseek_api(prompt)
+                logger.info(f"使用DeepSeek API生成{section}报告")
+                report = call_deepseek_api(prompt)
             except Exception as e:
-                logger.error(f"Flowith API生成{section}报告出错: {e}，尝试使用DeepSeek API")
-                # 如果Flowith出错，尝试使用DeepSeek API
-                try:
-                    report = call_deepseek_api(prompt)
-                except Exception as deep_e:
-                    logger.error(f"DeepSeek API也生成{section}报告出错: {deep_e}")
-                    report = f"生成{section}报告时发生错误，请稍后再试。"
+                logger.error(f"DeepSeek API生成{section}报告出错: {e}")
+                report = f"生成{section}报告时发生错误，请稍后再试。"
             
             all_reports[section] = report
             
@@ -462,7 +450,7 @@ def call_deepseek_api(prompt):
     """调用DeepSeek官方API生成命理分析报告"""
     max_retries = 3  # 最大重试次数
     retry_delay = 2  # 重试间隔（秒）
-    timeout = 120    # 请求超时时间（秒）
+    timeout = 30     # 请求超时时间（秒）降低为30秒避免worker超时
     
     headers = {
         "Content-Type": "application/json",
@@ -505,7 +493,7 @@ def call_deepseek_api(prompt):
                     # DeepSeek API使用OpenAI格式的响应
                     return result['choices'][0]['message']['content']
                 else:
-                    logger.warning(f"DeepSeek {model_name}模型响应格式异常: {json.dumps(result, ensure_ascii=False)}")
+                    logger.warning(f"DeepSeek {DEEPSEEK_MODEL}模型响应格式异常: {json.dumps(result, ensure_ascii=False)}")
                     # 如果响应格式异常，但有数据，尝试提取可能的内容
                     if isinstance(result, dict) and any(key for key in result.keys() if 'content' in key.lower()):
                         for key, value in result.items():
@@ -515,7 +503,7 @@ def call_deepseek_api(prompt):
                     return "生成报告时出现问题，响应格式异常。请稍后再试。"
             else:
                 # 如果响应状态码不是200，记录错误并准备重试
-                error_msg = f"DeepSeek {model_name}模型调用失败 (尝试 {attempt+1}/{max_retries}): {response.status_code} - {response.text}"
+                error_msg = f"DeepSeek {DEEPSEEK_MODEL}模型调用失败 (尝试 {attempt+1}/{max_retries}): {response.status_code} - {response.text}"
                 logger.error(error_msg)
                 
                 # 如果不是最后一次尝试，等待后重试
@@ -529,7 +517,7 @@ def call_deepseek_api(prompt):
                 
         except requests.exceptions.Timeout as e:
             # 超时异常处理
-            logger.error(f"调用DeepSeek {model_name}模型超时 (尝试 {attempt+1}/{max_retries}): {e}")
+            logger.error(f"调用DeepSeek {DEEPSEEK_MODEL}模型超时 (尝试 {attempt+1}/{max_retries}): {e}")
             if attempt < max_retries - 1:
                 import time
                 time.sleep(retry_delay * (attempt + 1))
@@ -539,7 +527,7 @@ def call_deepseek_api(prompt):
         
         except (requests.exceptions.ConnectionError, requests.exceptions.ChunkedEncodingError) as e:
             # 连接错误或块编码错误处理
-            logger.error(f"调用DeepSeek {model_name}模型连接错误 (尝试 {attempt+1}/{max_retries}): {e}")
+            logger.error(f"调用DeepSeek {DEEPSEEK_MODEL}模型连接错误 (尝试 {attempt+1}/{max_retries}): {e}")
             if attempt < max_retries - 1:
                 import time
                 time.sleep(retry_delay * (attempt + 1))
@@ -549,13 +537,13 @@ def call_deepseek_api(prompt):
                 
         except Exception as e:
             # 其他异常处理
-            logger.error(f"调用DeepSeek {model_name}模型未预期错误 (尝试 {attempt+1}/{max_retries}): {e}")
+            logger.error(f"调用DeepSeek {DEEPSEEK_MODEL}模型未预期错误 (尝试 {attempt+1}/{max_retries}): {e}")
             if attempt < max_retries - 1:
                 import time
                 time.sleep(retry_delay * (attempt + 1))
                 continue
             else:
-                return f"抱歉，连接DeepSeek {model_name}模型时出现问题: {str(e)[:100]}...，请稍后再试。"
+                return f"抱歉，连接DeepSeek {DEEPSEEK_MODEL}模型时出现问题: {str(e)[:100]}...，请稍后再试。"
     
 
 
@@ -605,7 +593,9 @@ def generate_report():
             return jsonify({"error": "计算八字信息失败"}), 400
         
         # 生成AI报告
-        reports = generate_ai_report(bazi_info)
+        bazi_str = bazi_info.get('bazi', '')
+        prompt = f"八字：{bazi_str}，请生成命理分析报告。"
+        reports = call_deepseek_api(prompt)
         
         # 组合结果
         result = {
@@ -618,9 +608,7 @@ def generate_report():
         logger.error(f"生成报告请求处理出错: {e}")
         return jsonify({"error": f"处理请求时出错: {str(e)}"}), 500
 
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    return app.send_static_file(filename)
+# 静态文件由Flask自动处理，不需要额外的路由
 
 if __name__ == '__main__':
     # 本地开发环境
@@ -632,3 +620,5 @@ else:
     port = int(os.environ.get("PORT", 8090))
     # 确保生产环境中不启用调试模式
     app.config['DEBUG'] = False
+    # 禁用静态文件缓存，解决CSS/JS内容为空的问题
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
