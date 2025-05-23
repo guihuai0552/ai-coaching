@@ -41,7 +41,7 @@ import os
 DEEPSEEK_API_ENDPOINT = "https://api.deepseek.com/v1/chat/completions"
 # 使用环境变量存储API密钥，默认则使用这个值
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "sk-0e4af51d9cc945e785e913d3fc685fe1")
-DEEPSEEK_MODEL = "deepseek-chat"  # 使用DeepSeek模型
+DEEPSEEK_MODEL = "deepseek-reasoner"  # 使用DeepSeek模型
 
 # 十二时辰对应表
 SHICHEN_MAP = {
