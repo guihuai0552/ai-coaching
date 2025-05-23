@@ -23,6 +23,15 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 
+# 添加CORS头，解决跨域问题
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
 # Flowith API配置
 FLOWITH_ENDPOINT = "https://edge.flowith.net/external/use/seek-knowledge"
 FLOWITH_KEY = "flo_916327f7e9c65188cb23550a5d25cff77ce997dccc7d888f3aeee5c1cf263da6"  # 使用提供的API密钥
@@ -608,7 +617,26 @@ def generate_report():
         logger.error(f"生成报告请求处理出错: {e}")
         return jsonify({"error": f"处理请求时出错: {str(e)}"}), 500
 
-# 静态文件由Flask自动处理，不需要额外的路由
+# 添加两个直接返回静态文件内容的路由，解决Render.com部署问题
+@app.route('/style.css')
+def serve_css():
+    try:
+        with open('static/style.css', 'r', encoding='utf-8') as f:
+            css_content = f.read()
+        return css_content, 200, {'Content-Type': 'text/css'}
+    except Exception as e:
+        logger.error(f"读取CSS文件失败: {e}")
+        return "", 500
+
+@app.route('/script.js')
+def serve_js():
+    try:
+        with open('static/script.js', 'r', encoding='utf-8') as f:
+            js_content = f.read()
+        return js_content, 200, {'Content-Type': 'application/javascript'}
+    except Exception as e:
+        logger.error(f"读取JS文件失败: {e}")
+        return "", 500
 
 if __name__ == '__main__':
     # 本地开发环境
