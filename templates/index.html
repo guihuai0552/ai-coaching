@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI命理教练 - 个人成长的智慧指南</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container main-container">
+        <header class="text-center py-4">
+            <h1 class="site-title">AI命理教练</h1>
+            <p class="site-subtitle">用传统八字智慧，指引现代个人成长</p>
+        </header>
+
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <div class="card input-card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">输入您的生日信息</h2>
+                        
+                        <form id="birthdayForm" class="needs-validation" novalidate>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="year" class="form-label">年份</label>
+                                    <select class="form-select" id="year" required>
+                                        <option value="" selected disabled>选择年份</option>
+                                        {% for year in years %}
+                                        <option value="{{ year }}">{{ year }}年</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">请选择出生年份</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="month" class="form-label">月份</label>
+                                    <select class="form-select" id="month" required>
+                                        <option value="" selected disabled>选择月份</option>
+                                        {% for month in months %}
+                                        <option value="{{ month }}">{{ month }}月</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">请选择出生月份</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="day" class="form-label">日期</label>
+                                    <select class="form-select" id="day" required>
+                                        <option value="" selected disabled>选择日期</option>
+                                        {% for day in days %}
+                                        <option value="{{ day }}">{{ day }}日</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">请选择出生日期</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="shichen" class="form-label">时辰</label>
+                                <select class="form-select" id="shichen" required>
+                                    <option value="" selected disabled>选择时辰</option>
+                                    {% for shichen in shichens %}
+                                    <option value="{{ shichen.name }}">{{ shichen.name }} ({{ shichen.range }})</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">请选择出生时辰</div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg" id="generateBtn">生成命理报告</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 加载动画 -->
+        <div id="loadingSection" class="text-center py-5 d-none">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">加载中...</span>
+            </div>
+            <h3 class="mt-3">正在生成您的命理报告...</h3>
+            <p class="text-muted">这可能需要几分钟时间，请耐心等待</p>
+            <div class="card mt-4 p-3 wisdom-card">
+                <p class="mb-0"> 感谢你的体验，但记住一切都是叙事 · Just a Story
+                    在终极的分析中，一切知识都是历史。
+                    我研究命理、占卜，最初是为了解决自己的迷茫，后来，我希望能用它为他人带去些许帮助。
+                    
+                    我惊叹命运之神的捉弄，它往往以悲剧的形式展现自己：
+                    
+                    奥德修斯困于回乡的旅途，福贵困于活着的诅咒。
+                    吉本的《罗马帝国衰亡史》记录着文明无可挽回的衰败、《资治通鉴》则记叙着王朝的起落与更迭
+                    
+                    正如荣格在“共时性”理论中所说：
+                    
+                    自然律的繁富构成了经验的现实，其意义超越了因果解释。
+                    事件之间，乃至它们与观察者的心理状态之间，存在着奇妙的相互依存关系。
+                    
+                    当我不再追问“本质”，不再试图用语言掌握那不可言说的形而上之物，
+                    转而以“讲故事”的方式去理解人生的流动，世界便开始鲜活起来。
+                    
+                    所谓命运，不过是那些在我们一生中以概率1发生的事件。
+                    我们无法真正“认识”命运，所有命运模型都是错的，但有些却是有用的。
+                    
+                    命运不是预言，而是一种召唤。
+                    你无法预言未来，但你可以让一切发生。
+                    
+                </p>
+            </div>
+        </div>
+
+        <!-- 报告内容 -->
+        <div id="reportSection" class="d-none mt-5">
+            <div class="report-header text-center mb-4">
+                <h2>您的个人命理分析报告</h2>
+                <p class="text-muted" id="baziInfo"></p>
+            </div>
+            
+            <!-- 八字信息可视化表格 -->
+            <div class="bazi-chart mb-4" id="baziChart">
+                <table class="bazi-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>年</th>
+                            <th>月</th>
+                            <th>日</th>
+                            <th>时</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="solar-row">
+                            <td>公历</td>
+                            <td id="solar-year"></td>
+                            <td id="solar-month"></td>
+                            <td id="solar-day"></td>
+                            <td id="solar-time"></td>
+                        </tr>
+                        <tr class="lunar-row">
+                            <td>农历</td>
+                            <td id="lunar-year"></td>
+                            <td id="lunar-month"></td>
+                            <td id="lunar-day"></td>
+                            <td id="lunar-time"></td>
+                        </tr>
+
+                        <tr class="heavenly-row">
+                            <td>天干</td>
+                            <td><div class="gan-circle" id="year-gan"></div></td>
+                            <td><div class="gan-circle" id="month-gan"></div></td>
+                            <td><div class="gan-circle" id="day-gan"></div></td>
+                            <td><div class="gan-circle" id="time-gan"></div></td>
+                        </tr>
+                        <tr class="earthly-row">
+                            <td>地支</td>
+                            <td><div class="zhi-circle" id="year-zhi"></div></td>
+                            <td><div class="zhi-circle" id="month-zhi"></div></td>
+                            <td><div class="zhi-circle" id="day-zhi"></div></td>
+                            <td><div class="zhi-circle" id="time-zhi"></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="report-actions text-end mb-3">
+                <button class="btn btn-outline-primary btn-sm me-2" id="copyReportBtn">
+                    <i class="bi bi-clipboard"></i> 复制报告
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" id="saveImageBtn">
+                    <i class="bi bi-download"></i> 保存为图片
+                </button>
+            </div>
+
+            <div class="report-content" id="reportContent">
+                <!-- 第一部分：八字命盘概览 -->
+                <div class="card mb-4 report-section">
+                    <div class="card-header">
+                        <h3>第一部分：八字命盘概览</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="overviewReport">
+                            <!-- 报告内容将通过JavaScript填充 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第二部分：十神深度探索 -->
+                <div class="card mb-4 report-section">
+                    <div class="card-header">
+                        <h3>第二部分：十神深度探索</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="tenGodsReport">
+                            <!-- 报告内容将通过JavaScript填充 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第三部分：赋能行动手册 -->
+                <div class="card report-section">
+                    <div class="card-header">
+                        <h3>第三部分：赋能行动手册</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="actionGuideReport">
+                            <!-- 报告内容将通过JavaScript填充 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center py-4 mt-5">
+            <p>AI命理教练 &copy; 2025 | 本工具旨在个人成长指导，非命理算命工具</p>
+            <p class="small text-muted">命运掌握在自己手中，八字分析仅供参考</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="/static/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,614 @@
+/* AI命理教练网站样式 - 苹果风格设计 */
+
+:root {
+    /* 定义网站主要颜色变量 - 苹果风格 */
+    --primary-color: #0071e3;      /* 主色调：苹果浅蓝色 */
+    --secondary-color: #86c5fd;    /* 辅助色：淡蓝色 */
+    --accent-color: #f5f5f7;       /* 强调色：淡银灰 */
+    --text-primary: #1d1d1f;       /* 主要文字颜色 */
+    --text-secondary: #86868b;     /* 次要文字颜色 */
+    --background-light: #ffffff;   /* 浅色背景 */
+    --card-bg: #f5f5f7;            /* 卡片背景色 */
+    --divider-color: #d2d2d7;      /* 分割线颜色 */
+    --shadow-light: rgba(0, 0, 0, 0.05); /* 轻微阴影颜色 */
+    --shadow-medium: rgba(0, 0, 0, 0.08); /* 中度阴影颜色 */
+    --glass-bg: rgba(255, 255, 255, 0.7); /* 碧璃拟态背景色 */
+    --card-radius: 20px;           /* 卡片圆角半径 */
+    --button-radius: 22px;         /* 按钮圆角半径 */
+    --transition-standard: all 0.2s ease-in-out; /* 标准过渡效果 */
+}
+
+/* 设置平滑滚动和字体渲染 */
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    /* 页面整体样式 - 苹果风格 */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* 主容器样式 - 苹果风格 */
+.main-container {
+    max-width: 1200px;             /* 增加最大宽度 */
+    padding: 40px 20px;            /* 增加垂直内边距 */
+    margin: 0 auto;                /* 居中显示 */
+    display: flex;                 /* 使用弹性盒模型 */
+    flex-direction: column;        /* 垂直排列 */
+    gap: 60px;                     /* 组件间距 */
+}
+
+/* 页头样式 - 苹果风格 */
+header {
+    text-align: center;
+    padding: 40px 0 20px;
+    position: relative;
+}
+
+/* 网站标题样式 - 苹果风格 */
+.site-title {
+    color: var(--text-primary);    /* 使用主要文字颜色 */
+    font-weight: 700;              /* 粗体 */
+    font-size: 3.5rem;             /* 加大字体 */
+    margin-bottom: 0.5rem;         /* 底部外边距 */
+    letter-spacing: -0.5px;        /* 字间距紧凑 */
+    line-height: 1.1;              /* 紧凑行高 */
+}
+
+/* 网站副标题样式 - 苹果风格 */
+.site-subtitle {
+    color: var(--text-secondary);  /* 使用次要文字颜色 */
+    font-size: 1.5rem;             /* 增大字体 */
+    margin-bottom: 1rem;           /* 减少底部外边距 */
+    font-weight: 400;              /* 正常字重 */
+    max-width: 600px;              /* 限制最大宽度 */
+    margin-left: auto;             /* 水平居中 */
+    margin-right: auto;            /* 水平居中 */
+}
+
+/* 卡片容器样式 - 苹果风格 */
+.row {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* 输入卡片样式 - 苹果风格 */
+.input-card {
+    border: none;                  /* 无边框 */
+    border-radius: var(--card-radius); /* 大圆角 */
+    box-shadow: 0 8px 30px var(--shadow-light); /* 根据苹果风格调整阴影 */
+    margin-bottom: 40px;           /* 增加底部外边距 */
+    background-color: var(--card-bg); /* 卡片背景色 */
+    backdrop-filter: blur(20px);   /* 模糊效果，增加碧璃拟态感 */
+    -webkit-backdrop-filter: blur(20px); /* Safari 支持 */
+    transition: var(--transition-standard); /* 平滑过渡 */
+    overflow: hidden;              /* 防止内容溢出 */
+    width: 100%;                   /* 卡片宽度占满容器 */
+    max-width: 800px;              /* 限制最大宽度 */
+}
+
+.input-card:hover {
+    transform: translateY(-5px);   /* 悬停时轻微上浮 */
+    box-shadow: 0 15px 35px var(--shadow-medium); /* 增强阴影 */
+}
+
+.card-body {
+    padding: 40px;                 /* 增加内边距 */
+}
+
+/* 表单标签样式 - 苹果风格 */
+.form-label {
+    font-weight: 500;              /* 调整字重 */
+    color: var(--text-primary);    /* 使用主要文字颜色 */
+    margin-bottom: 8px;            /* 增加底部外边距 */
+    display: block;                /* 块级显示 */
+    font-size: 0.95rem;            /* 调整字体大小 */
+}
+
+/* 表单控件样式 - 苹果风格 */
+.form-select,
+.form-control {
+    border-radius: 12px;           /* 调整圆角 */
+    border: 1px solid var(--divider-color); /* 设置边框颜色 */
+    padding: 12px 16px;            /* 增加内边距 */
+    font-size: 1rem;               /* 调整字体大小 */
+    background-color: rgba(255, 255, 255, 0.8); /* 半透明背景 */
+    transition: var(--transition-standard); /* 平滑过渡 */
+}
+
+.form-select:focus,
+.form-control:focus {
+    border-color: var(--primary-color); /* 聚焦时边框颜色 */
+    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15); /* 苹果风格聚焦效果 */
+    outline: none;                 /* 移除默认轮廓 */
+}
+
+/* 按钮样式 - 苹果风格 */
+.btn-primary {
+    background-color: var(--primary-color); /* 背景色为主色调 */
+    border: none;                  /* 无边框 */
+    border-radius: var(--button-radius); /* 大圆角 */
+    font-weight: 500;              /* 调整字重 */
+    padding: 14px 30px;            /* 增加内边距 */
+    font-size: 1.1rem;             /* 增大字体 */
+    transition: var(--transition-standard); /* 平滑过渡 */
+    box-shadow: 0 2px 8px rgba(0, 113, 227, 0.3); /* 添加轻微阴影 */
+    display: inline-flex;          /* 行内弹性布局 */
+    align-items: center;           /* 垂直居中 */
+    justify-content: center;       /* 水平居中 */
+}
+
+/* 按钮悬停样式 - 苹果风格 */
+.btn-primary:hover {
+    background-color: #0077ed;      /* 悬停时的颜色微调 */
+    transform: scale(1.02);        /* 轻微放大 */
+    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.4); /* 增强阴影 */
+}
+
+/* 按钮点击样式 - 苹果风格 */
+.btn-primary:active {
+    transform: scale(0.98);         /* 轻微缩小 */
+    box-shadow: 0 2px 4px rgba(0, 113, 227, 0.3); /* 减少阴影 */
+}
+
+/* 智慧提示卡片样式 - 苹果风格 */
+.wisdom-card {
+    background-color: rgba(0, 113, 227, 0.05);  /* 淡蓝色背景 */
+    border-radius: 16px;                       /* 大圆角 */
+    font-style: normal;                        /* 正常文字样式 */
+    padding: 30px;                             /* 增加内边距 */
+    box-shadow: 0 8px 20px var(--shadow-light); /* 添加阴影 */
+    border: 1px solid rgba(0, 113, 227, 0.1);  /* 添加微妙边框 */
+    backdrop-filter: blur(10px);              /* 模糊效果 */
+    -webkit-backdrop-filter: blur(10px);      /* Safari 支持 */
+    font-size: 1.1rem;                         /* 增大字体 */
+    line-height: 1.7;                          /* 调整行高 */
+    color: var(--text-primary);                /* 文字颜色 */
+    max-width: 800px;                          /* 限制最大宽度 */
+    margin: 40px auto 0;                       /* 外边距居中 */
+}
+
+/* 加载动画部分 - 苹果风格 */
+#loadingSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 0;
+    transition: var(--transition-standard);
+}
+
+/* 加载动画旋转图标 - 苹果风格 */
+.spinner-border {
+    color: var(--primary-color);
+    width: 4rem !important;
+    height: 4rem !important;
+    border-width: 0.25rem;
+    animation-duration: 1s;
+}
+
+/* 加载中文字样式 - 苹果风格 */
+#loadingSection h3 {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 1.8rem;
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+#loadingSection p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 500px;
+    text-align: center;
+}
+
+/* 报告区域样式 - 苹果风格 */
+#reportSection {
+    opacity: 1; /* 修改为默认可见 */
+    transform: translateY(0);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+#reportSection.d-none {
+    display: none !important;
+}
+
+.report-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px 0;
+}
+
+.report-header h2 {
+    color: var(--text-primary);    /* 使用主要文字颜色 */
+    font-weight: 700;              /* 粗体 */
+    font-size: 2.5rem;             /* 增大字体 */
+    margin-bottom: 15px;           /* 底部外边距 */
+    letter-spacing: -0.5px;        /* 字间距 */
+}
+
+.report-header p {
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+}
+
+/* 报告操作按钮 - 苹果风格 */
+.report-actions {
+    margin: 30px 0;
+}
+
+.btn-outline-primary,
+.btn-outline-secondary {
+    border: 1px solid var(--divider-color);
+    color: var(--text-primary);
+    background-color: transparent;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: var(--transition-standard);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-secondary:hover {
+    background-color: var(--accent-color);
+    color: var(--text-primary);
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px var(--shadow-light);
+}
+
+/* 报告部分样式 - 苹果风格 */
+.report-section {
+    margin-bottom: 50px;           /* 增加底部外边距 */
+    border: none;                  /* 无边框 */
+    border-radius: var(--card-radius); /* 大圆角 */
+    box-shadow: 0 10px 30px var(--shadow-light); /* 增强阴影 */
+    overflow: hidden;              /* 内容溢出隐藏 */
+    transition: var(--transition-standard); /* 平滑过渡 */
+    transform: translateY(0);      /* 初始位置 */
+}
+
+.report-section:hover {
+    transform: translateY(-8px);   /* 悬停时上浮 */
+    box-shadow: 0 15px 40px var(--shadow-medium); /* 增强阴影 */
+}
+
+/* 报告卡片头部样式 - 苹果风格 */
+.report-section .card-header {
+    background: linear-gradient(135deg, var(--primary-color), #3d8aff); /* 渐变背景 */
+    color: white;                  /* 文字颜色为白色 */
+    padding: 20px 30px;            /* 增加内边距 */
+    border: none;                  /* 无边框 */
+}
+
+/* 报告卡片头部标题样式 - 苹果风格 */
+.report-section .card-header h3 {
+    margin: 0;                     /* 无外边距 */
+    font-size: 1.5rem;             /* 增大字体 */
+    font-weight: 600;              /* 半粗体 */
+    letter-spacing: -0.3px;        /* 字间距 */
+}
+
+/* 报告卡片内容区域样式 - 苹果风格 */
+.report-section .card-body {
+    padding: 40px;                 /* 增加内边距 */
+    font-size: 1.1rem;             /* 增大字体 */
+    line-height: 1.8;              /* 增加行高 */
+    color: var(--text-primary);    /* 文字颜色 */
+    background-color: white;       /* 白色背景 */
+}
+
+/* 报告文字排版样式 - 苹果风格 */
+.report-section .card-body h1,
+.report-section .card-body h2,
+.report-section .card-body h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+}
+
+.report-section .card-body h1 {
+    font-size: 1.8rem;
+    border-bottom: 1px solid var(--divider-color);
+    padding-bottom: 0.5rem;
+}
+
+.report-section .card-body h2 {
+    font-size: 1.5rem;
+    margin-top: 2em;
+}
+
+.report-section .card-body h3 {
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.report-section .card-body p {
+    margin-bottom: 1.2em;
+    text-align: justify;
+}
+
+.report-section .card-body ul,
+.report-section .card-body ol {
+    margin: 1.2em 0;
+    padding-left: 2em;
+}
+
+.report-section .card-body li {
+    margin-bottom: 0.8em;
+    position: relative;
+}
+
+.report-section .card-body li::marker {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.report-section .card-body strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.report-section .card-body em {
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+/* 特殊标记的文本样式 */
+.report-section .card-body li strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* 为每个内容区域添加空间 */
+.report-section .card-body > div {
+    margin-bottom: 2em;
+}
+
+/* 页脚样式 - 苹果风格 */
+footer {
+    color: var(--text-secondary);  /* 使用次要文字颜色 */
+    border-top: 1px solid var(--divider-color); /* 更新边框颜色 */
+    margin-top: 80px;              /* 增加顶部外边距 */
+    padding: 30px 0;               /* 增加内边距 */
+    text-align: center;            /* 文字居中 */
+    font-size: 0.95rem;            /* 调整字体大小 */
+}
+
+/* 八字信息可视化表格样式 - 苹果风格 */
+.bazi-chart {
+    margin: 0 auto 40px;           /* 增加底部外边距 */
+    background-color: white;       /* 白色背景 */
+    border-radius: var(--card-radius); /* 大圆角 */
+    box-shadow: 0 10px 30px var(--shadow-light); /* 增强阴影 */
+    overflow: hidden;              /* 防止内容溢出 */
+    transition: var(--transition-standard); /* 平滑过渡 */
+    max-width: 900px;              /* 限制最大宽度 */
+}
+
+.bazi-chart:hover {
+    transform: translateY(-5px);   /* 悬停时上浮 */
+    box-shadow: 0 15px 35px var(--shadow-medium); /* 增强阴影 */
+}
+
+.bazi-table {
+    width: 100%;
+    border-collapse: separate;      /* 独立边框 */
+    border-spacing: 0;             /* 无边框间距 */
+    text-align: center;
+    overflow: hidden;              /* 防止内容溢出 */
+}
+
+.bazi-table th, .bazi-table td {
+    padding: 16px 12px;            /* 增加内边距 */
+    border: none;                  /* 移除边框 */
+    position: relative;            /* 相对定位 */
+}
+
+.bazi-table tr:not(:last-child) td,
+.bazi-table tr:not(:last-child) th {
+    border-bottom: 1px solid var(--divider-color); /* 只有底部边框 */
+}
+
+.bazi-table th {
+    background: linear-gradient(135deg, var(--primary-color), #3d8aff); /* 渐变背景 */
+    color: white;
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 20px 12px;            /* 增加内边距 */
+    letter-spacing: 0.5px;         /* 字间距 */
+}
+
+/* 公历行样式 - 苹果风格 */
+.solar-row td {
+    background-color: rgba(245, 245, 247, 0.5); /* 半透明背景 */
+    font-weight: 500;              /* 字重 */
+    color: var(--text-primary);    /* 文字颜色 */
+}
+
+/* 农历行样式 - 苹果风格 */
+.lunar-row td {
+    background-color: rgba(245, 245, 247, 0.8); /* 半透明背景 */
+    font-weight: 500;              /* 字重 */
+    color: var(--text-primary);    /* 文字颜色 */
+}
+
+/* 天干行样式 - 苹果风格 */
+.heavenly-row td {
+    padding: 25px 12px;            /* 增加内边距 */
+    background-color: white;       /* 白色背景 */
+}
+
+/* 地支行样式 - 苹果风格 */
+.earthly-row td {
+    padding: 25px 12px;            /* 增加内边距 */
+    background-color: white;       /* 白色背景 */
+}
+
+/* 天干圆形样式 - 苹果风格 */
+.gan-circle {
+    width: 60px;                   /* 增加大小 */
+    height: 60px;                  /* 增加大小 */
+    border-radius: 50%;            /* 圆形 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-weight: 700;
+    color: white;
+    font-size: 1.5rem;             /* 增大字体 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+    position: relative;            /* 相对定位 */
+    z-index: 2;                    /* 层级 */
+    transition: var(--transition-standard); /* 平滑过渡 */
+}
+
+.gan-circle:hover {
+    transform: scale(1.1);         /* 悬停时放大 */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* 增强阴影 */
+}
+
+/* 地支圆形样式 - 苹果风格 */
+.zhi-circle {
+    width: 60px;                   /* 增加大小 */
+    height: 60px;                  /* 增加大小 */
+    border-radius: 50%;            /* 圆形 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-weight: 700;
+    color: white;
+    font-size: 1.5rem;             /* 增大字体 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+    position: relative;            /* 相对定位 */
+    z-index: 2;                    /* 层级 */
+    transition: var(--transition-standard); /* 平滑过渡 */
+}
+
+.zhi-circle:hover {
+    transform: scale(1.1);         /* 悬停时放大 */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* 增强阴影 */
+}
+
+/* 添加响应式设计 - 苹果风格 */
+@media (max-width: 768px) {
+    /* 移动端样式调整 */
+    .site-title {
+        font-size: 2.5rem;
+    }
+    
+    .site-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .card-body {
+        padding: 25px;
+    }
+    
+    .input-card {
+        margin-bottom: 30px;
+    }
+    
+    .report-section .card-header {
+        padding: 15px 20px;
+    }
+    
+    .report-section .card-body {
+        padding: 25px;
+    }
+    
+    .gan-circle, .zhi-circle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+    
+    .bazi-table th, .bazi-table td {
+        padding: 12px 8px;
+    }
+}
+
+/* 添加动画效果 - 苹果风格 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 应用滚动显示动画 - 先禁用动画解决问题 */
+.report-section {
+    opacity: 1; /* 确保内容可见 */
+    /* 暂时移除动画效果，修复不可见问题 */
+    /*
+    animation: fadeInUp 0.8s ease forwards;
+    animation-delay: calc(var(--animation-order, 0) * 0.2s);
+    opacity: 0;
+    */
+}
+
+/*
+.report-section:nth-child(1) {
+    --animation-order: 1;
+}
+
+.report-section:nth-child(2) {
+    --animation-order: 2;
+}
+
+.report-section:nth-child(3) {
+    --animation-order: 3;
+}
+*/
+
+/* 注意: 移除重复的地支圆形样式定义，使用上面的苹果风格定义 */
+
+/* 五行颜色 */
+.wuxing-jin { background-color: #d4af37; } /* 金 - 金色 */
+.wuxing-mu { background-color: #2e8b57; }  /* 木 - 绿色 */
+.wuxing-shui { background-color: #1e90ff; } /* 水 - 蓝色 */
+.wuxing-huo { background-color: #ff4500; }  /* 火 - 红色 */
+.wuxing-tu { background-color: #8b4513; }   /* 土 - 棕色 */
+
+/* 响应式样式调整 */
+@media (max-width: 768px) {
+    .site-title {
+        font-size: 2rem;           /* 在小屏幕上减小标题字体大小 */
+    }
+    
+    .site-subtitle {
+        font-size: 1rem;           /* 在小屏幕上减小副标题字体大小 */
+    }
+    
+    .report-section .card-body {
+        padding: 15px;             /* 在小屏幕上减小内边距 */
+    }
+    
+    /* 确保与上面的响应式设计保持一致 */
+    .gan-circle, .zhi-circle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+    
+    .bazi-table th, .bazi-table td {
+        padding: 8px 5px;
+    }
+}
