@@ -500,12 +500,32 @@ def call_deepseek_api(prompt):
             logger.info(f"DeepSeek API状态码: {response.status_code}")
             
             if response.status_code == 200:
-                # 分块读取响应内容，降低内存使用和超时风险
+                # 分块读取响应内容，并定期输出进度信息
                 logger.info("开始分块读取响应内容...")
                 content = ""
-                for chunk in response.iter_content(chunk_size=1024):
-                    if chunk:
-                        content += chunk.decode('utf-8')
+                chunk_count = 0
+                total_bytes = 0
+                
+                try:
+                    # 设置更小的块大小和进度报告
+                    for chunk in response.iter_content(chunk_size=512):
+                        if chunk:
+                            chunk_text = chunk.decode('utf-8', errors='replace')  # 使用错误替换模式避免解码错误
+                            content += chunk_text
+                            chunk_count += 1
+                            total_bytes += len(chunk)
+                            
+                            # 每接收几个块输出一次进度信息
+                            if chunk_count % 5 == 0:
+                                logger.info(f"正在读取数据: 已接收{chunk_count}个块，共{total_bytes}字节")
+                except Exception as read_err:
+                    # 捕获并记录读取过程中的错误
+                    logger.error(f"读取响应内容时出错: {read_err}")
+                    # 如果已经读取了一些内容，尝试继续JSON解析
+                    if len(content) < 10:  # 如果内容太少，无法解析
+                        raise Exception(f"响应内容读取失败，只收到{len(content)}字节数据")
+                
+                logger.info(f"完成响应内容读取，总共接收{total_bytes}字节数据")
                 
                 # 解析JSON结果
                 logger.info(f"已成功读取响应内容，大小: {len(content)}字节")
