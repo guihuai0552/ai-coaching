@@ -460,7 +460,7 @@ def call_deepseek_api(prompt):
     """调用DeepSeek官方API生成命理分析报告"""
     max_retries = 3  # 最大重试次数
     retry_delay = 2  # 重试间隔（秒）
-    timeout = 30     # 请求超时时间（秒）降低为30秒避免worker超时
+    timeout = 90     # 增加超时时间至90秒，给API足够响应时间
     
     headers = {
         "Content-Type": "application/json",
