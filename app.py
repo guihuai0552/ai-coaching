@@ -41,7 +41,7 @@ import os
 DEEPSEEK_API_ENDPOINT = "https://api.deepseek.com/v1/chat/completions"
 # 使用环境变量存储API密钥，默认则使用这个值
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "sk-0e4af51d9cc945e785e913d3fc685fe1")
-DEEPSEEK_MODEL = "deepseek-reasoner"  # 使用DeepSeek模型
+DEEPSEEK_MODEL = "deepseek-chat"  # 使用DeepSeek模型
 
 # 十二时辰对应表
 SHICHEN_MAP = {
@@ -460,7 +460,7 @@ def call_deepseek_api(prompt):
     """调用DeepSeek官方API生成命理分析报告"""
     max_retries = 3  # 最大重试次数
     retry_delay = 2  # 重试间隔（秒）
-    timeout = 180     # 增加超时时间至180秒，给API足够响应时间
+    timeout = 90     # 增加超时时间至90秒，给API足够响应时间
     
     headers = {
         "Content-Type": "application/json",
@@ -486,16 +486,30 @@ def call_deepseek_api(prompt):
     # 实现重试机制
     for attempt in range(max_retries):
         try:
-            # 发送请求，并指定超时时间
+            # 使用流式请求和分块传输，降低内存占用和超时风险
+            logger.info(f"开始调用DeepSeek API，超时设置为{timeout}秒")
             response = requests.post(
                 DEEPSEEK_API_ENDPOINT, 
                 headers=headers, 
                 json=payload,
-                timeout=timeout
+                timeout=timeout,
+                stream=True  # 启用流式传输
             )
             
+            # 立即检查状态码
+            logger.info(f"DeepSeek API状态码: {response.status_code}")
+            
             if response.status_code == 200:
-                result = response.json()
+                # 分块读取响应内容，降低内存使用和超时风险
+                logger.info("开始分块读取响应内容...")
+                content = ""
+                for chunk in response.iter_content(chunk_size=1024):
+                    if chunk:
+                        content += chunk.decode('utf-8')
+                
+                # 解析JSON结果
+                logger.info(f"已成功读取响应内容，大小: {len(content)}字节")
+                result = json.loads(content)
                 logger.info(f"DeepSeek API响应成功: {json.dumps(result, ensure_ascii=False)[:200]}...")
                 
                 # DeepSeek API响应格式处理
