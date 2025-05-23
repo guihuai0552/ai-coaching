@@ -3,8 +3,17 @@ services:
   - type: web
     name: ai-coaching
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    buildCommand: |
+      pip install -r requirements.txt
+      # 创建缓存版本文件，强制更新
+      echo "$(date +%s)" > .version
+    startCommand: gunicorn app:app --timeout 120
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.0
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHONUNBUFFERED
+        value: "true"
+      - key: SEND_FILE_MAX_AGE_DEFAULT
+        value: "0"
